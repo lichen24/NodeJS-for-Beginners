@@ -1,26 +1,27 @@
-import express from "express";
+import express from 'express';
+import bodyParser from 'body-parser';
 
 const app = express();
-app.use(express.json());
-
-app.get("/items", (req, res) => {
-  res.json({ message: "Get all items" });
+app.use(bodyParser.json());
+app.get(`/api/v1/whisper`, (req, res) => {
+    res.json([]);
 });
 
-app.get("/items/:id", (req, res) => {
-  res.json({ message: `Get item ${req.params.id}` });
+app.get(`/api/v1/whisper/:id`, (req, res) => {
+    const id = parseInt(req.params.id)
+    res.json({id})
 });
 
-app.post("/items", (req, res) => {
-  res.status(201).json({ message: "Item created" });
+app.post(`/api/v1/whisper`, (req, res)=> {
+    res.status(201).json(req.body)
 });
 
-app.put("/items/:id", (req, res) => {
-  res.json({ message: `Item ${req.params.id} updated` });
+app.put(`/api/v1/whisper/:id`, (req, res) => {
+    res.sendStatus(200)
 });
 
-app.delete("/items/:id", (req, res) => {
-  res.status(204).send();
+app.delete(`/api/v1/whisper/:id`, (req, res) => {
+    res.sendStatus(200)
 });
 
-export default app;
+export {app}
