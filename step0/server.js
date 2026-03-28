@@ -81,4 +81,25 @@ app.put('/api/v1/whisper/:id', (req, res) => {
 app.delete('/api/v1/whisper/:id', (req, res) => {
   res.sendStatus(200)
 })*/
+
+//1. catch-all 404 handler
+app.use((req, res) => {
+  if (req.originalUrl.includes('api')) {
+    return res.status(404).json({ error: 'Not Found' })
+  } else {
+    return res.status(404).send('Not Found')
+  }
+})
+
+//  2. Global error handler
+app.use((err, req, res, next) => {
+  console.error(err.stack)
+
+  if (req.originalUrl.includes('api')) {
+    return res.status(500).json({ error: 'Internal Server Error' })
+  } else {
+    return res.status(500).send('Internal Server Error')
+  }
+})
+
 export { app }
