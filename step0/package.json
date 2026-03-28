@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "body-parser": "^2.2.2",
+    "ejs": "^5.0.1",
     "express": "^5.2.1"
   },
   "devDependencies": {
@@ -28,6 +29,6 @@
     "test": "jest",
     "test:coverage": "jest --coverage",
     "lint": "standard",
-    "lint:fix": "standard --fix" 
+    "lint:fix": "standard --fix"
   }
 }
