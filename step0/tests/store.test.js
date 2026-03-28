@@ -6,13 +6,13 @@ import { restoreDb, populateDb } from './utils.js'
 import { whispers, inventedId, existingId } from './fixtures.js'
 
 // import { describe, it, expect, beforeEach, afterAll } from '@jest/globals'
-const dbpath = join(process.cwd(), 'db.json')
+/*const dbpath = join(process.cwd(), 'db.json')
 const restoreDb = () => writeFileSync(dbpath, JSON.stringify([]))
 const populateDb = (data) => writeFileSync(dbpath, JSON.stringify(data))
 
 const fixtures = [{ id: 1, message: 'Hello' }, { id: 2, message: 'World' }]
 const inventedId = 12345
-const existingId = fixtures[0].id
+const existingId = fixtures[0].id*/
 
 describe('Store', () => {
   beforeEach(() => populateDb(whispers))
