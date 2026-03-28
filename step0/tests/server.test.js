@@ -10,26 +10,90 @@ describe('Server', () => {
     afterAll(restoreDb)
 
     describe("GET/api/v1/whisper", () => {
-        it.todo("Should return an empty array when there is no data")
-        it.todo("Should return all the whispers")
+        it("Should return an empty array when there is no data", async ()=>  {
+            await restoreDb() // empty the database before the test
+            const response = await supertest(app).get("/api/v1/whisper")
+            expect (response.status).toBe (200)
+            expect (response.body).toEqual([])
+        })
+        it("Should return all whispers", async () => {
+            const response = await supertest(app).get("/api/v1/whisper")
+            expect(response.status).toBe(200)
+            expect(response.body).toEqual(whispers)
+        })
     })
+
     describe("GET/api/v1/whisper/:id", () => {
-        it.todo("Shoule return a 404 when the whisper doesn't exist") 
-        it.todo("Should return a whisper details")
+        it("Shoule return a 404 when the whisper doesn't exist", async ()=>  {
+            const response = await supertest(app).get(`/api/v1/whisper/${inventedId}`) 
+            expect(response.status).toBe(404)
+        }) 
+        it("Should return a whisper details", async () => {
+            const response = await supertest(app).get(`/api/v1/whisper/${existingId}`)
+            expect(response.status).toBe(200)
+            expect(response.body).toEqual(whispers.find(w=> w.id === existingId))
+       })
     })
+
     describe("POST/api/v1/whisper", () => {
-        it.todo("Should return a 400 when the body is empty")
-        it.todo("Should return a 400 when the body is invalid")
-        it.todo("Should return a 201 when the whisper is created")
+        it("Should return a 400 when the body is empty", async () => {
+            const response = await supertest(app).post("/api/v1/whisper").send({})
+            expect(response.status).toBe(400)
+        })
+        it("Should return a 400 when the body is invalid", async () => {
+            const response = await supertest(app).post("/api/v1/whisper").send({invented: "This is a new whisper"})
+            expect(response.status).toBe(400)
+        })
+        it("Should return a 201 when the whisper is created", async () => {
+            const newWhisper = {
+                id: whispers.length + 1,
+                message: "This is a new whisper"
+            }
+            const response = await supertest(app).post("/api/v1/whisper").send({message: newWhisper.message})
+            // HTTP Response
+            expect(response.status).toBe(201)
+            expect(response.body).toEqual(newWhisper)
+            // Database
+            const storedWhisper= await getById(newWhisper.id)
+            expect(storedWhisper).toStrictEqual(newWhisper)
+        })
     })
+
     describe("PUT/api/v1/whisper/:id", () => {
-        it.todo("Should return a 400 when the body is empty")
-        it.todo("Should return a 400 when the body is invalid")
-        it.todo("Should return a 404 when the whisper doesn't exist")
-        it.todo("Should return a 200 when the whisper is updated")
+        it("Should return a 400 when the body is empty", async ()=> {
+            const response = await supertest(app).put(`/api/v1/whisper/${existingId}`).send({})
+            expect(response.status).toBe(400)
+        })
+        it("Should return a 400 when the body is invalid", async () => {
+            const response = await supertest(app).put(`/api/v1/whisper/${existingId}`).send({invented: "This is a new filed"})
+            expect(response.status).toBe(400)
+        })
+        it("Should return a 404 when the whisper doesn't exist", async () => {
+            const response = await supertest(app).put(`/api/v1/whisper/${inventedId}`).send({message: "Whisper updated"})
+            expect(response.status).toBe(404)
+        })
+        it("Should return a 200 when the whisper is updated", async () => {
+            const response = await supertest(app).put(`/api/v1/whisper/${existingId}`).send({message: "Whisper updated"})
+            expect(response.status).toBe(200)
+            //Database changes
+            const storedWhisper = await getById(existingId)
+            expect(storedWhisper).toStrictEqual({id: existingId, message: "Whisper updated"})
+        })
     })
+
     describe("DELETE/api/v1/whisper/:id", () => {
-        it.todo("Should return a 404 when the whisper doesn't exist")
-        it.todo("Should return a 200 when the whisper is deleted")
+        it("Should return a 404 when the whisper doesn't exist", async () => {
+            const response = await supertest(app).delete(`/api/v1/whisper/${inventedId}`)
+            expect(response.status).toBe(404)
+        })
+        it("Should return a 200 when the whisper is deleted", async () => {
+            const response = await supertest(app).delete(`/api/v1/whisper/${existingId}`)
+            expect(response.status).toBe(200)
+            //Database changes
+            const storedWhisper = await getById(existingId)
+            expect(storedWhisper).toBeUndefined()
+        })
+
     })  
 })
+
